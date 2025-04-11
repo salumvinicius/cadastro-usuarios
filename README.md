@@ -1,32 +1,30 @@
-# 📋 Cadastro de Usuários com Vue 3
+📋 Cadastro de Usuários com Vue 3
+Aplicação front-end construída com Vue 3 para cadastro de usuários com busca automática de endereço via CEP, listagem dinâmica, resumos por estado e origem, e testes automatizados com Vitest.
 
-Aplicação front-end construída com **Vue 3** para cadastro de usuários com busca automática de endereço via **CEP**, listagem dinâmica, resumos por estado e origem, e testes automatizados com **Vitest**.
 
-![Vue.js + CSS + Testes](https://img.shields.io/badge/vue-3.x-brightgreen?logo=vue.js) ![Vitest](https://img.shields.io/badge/testado%20com-vitest-yellowgreen?logo=vitest) ![Status](https://img.shields.io/badge/status-finalizado-blue)
 
----
+✅ Funcionalidades
+Formulário com validações e campos obrigatórios
 
-## ✅ Funcionalidades
+Busca automática de endereço via API do ViaCEP
 
-- Formulário com validações e campos obrigatórios  
-- Busca automática de endereço via **API do ViaCEP**  
-- Listagem de usuários com scroll interno  
-- Resumo por estado (UF) e por origem (Digital/Físico)  
-- Estilo limpo, responsivo e com destaque visual  
-- **Testes unitários automatizados** com cobertura total das funções principais  
+Listagem de usuários com scroll interno
 
----
+Resumo por estado (UF) e por origem (Digital/Físico)
 
-## 🧪 Testes Automatizados
+Estilo limpo, responsivo e com destaque visual
 
-O projeto inclui testes usando o framework **Vitest** com `@vue/test-utils`.
+Testes unitários automatizados com cobertura total das funções principais
 
-### Para rodar os testes:
+🧪 Testes Automatizados
+O projeto inclui testes usando o framework Vitest com @vue/test-utils.
 
-```bash
+Para rodar os testes:
+bash
+Copiar
+Editar
 npm run test
 Cobertura de testes:
-
 Cadastro de novo usuário
 
 Validação de campos obrigatórios
@@ -59,7 +57,6 @@ Vitest + Vue Test Utils
 (opcional) Pinia
 
 📸 Layout (print do sistema)
-<!-- Substitua com caminho da imagem -->
 
 👨‍💻 Desenvolvedor
 Projeto desenvolvido por Vinícius Salum
