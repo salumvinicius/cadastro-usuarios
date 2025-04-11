@@ -61,12 +61,6 @@ Vitest + Vue Test Utils
 📸 Layout (print do sistema)
 ![Layout](./src/assets/print.png)
 
-👨‍💻 Desenvolvedor
-Projeto desenvolvido por Vinícius Salum
-
-📦 Licença
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
 ✨ Melhorias Futuras
 Edição e exclusão de usuários
 
@@ -75,6 +69,3 @@ Integração com backend ou Firebase
 Página de login/admin
 
 Animações com Vue transitions
-
-💬 Dúvidas ou sugestões?
-Fique à vontade para abrir uma issue ou contribuir no GitHub!
