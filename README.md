@@ -59,7 +59,7 @@ Vitest + Vue Test Utils
 (opcional) Pinia
 
 📸 Layout (print do sistema)
-![Layout](./public/assets/print.png)
+![Layout](./src/assets/print.png)
 
 👨‍💻 Desenvolvedor
 Projeto desenvolvido por Vinícius Salum
