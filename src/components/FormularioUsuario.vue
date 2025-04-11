@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-  <form class="formulario" @submit.prevent="cadastroUsuario">
+  <form class="formulario" @submit.prevent="cadastroUsuario"> <!--Evita o comportamento padrão do formulário, que é recarregar a página ao enviar-->
     <h2>Cadastro de Usuário</h2>
-
+    <!-- Formulário de cadastro de usuário -->
     <label for="nome">Nome:</label>
     <input type="text" id="nome" v-model="usuario.nome" required/>
 
@@ -27,12 +27,13 @@
     <label for="origem">Origem:</label>
     <select id="origem" v-model="usuario.origem" required>
       <option value="">Selecione a origem</option>
-      <option value="digital">Digital</option>
-      <option value="fisico">Físico</option>
+      <option value="Digital">Digital</option>
+      <option value="Fisico">Físico</option>
     </select>
 
     <button type="submit">Cadastrar</button>
   </form>
+    <!--Criação da lista de usuarios, contendo nome, email, endereço e origem-->
     <div v-if="usuarios.length" class="lista-usuarios">
       <h2>Usuarios cadastrados</h2>
       <ul>
@@ -45,15 +46,31 @@
         </li>
       </ul>
     </div>
+    <div class="resumos" v-if="usuarios.length">
+      <!--Criação do resumo por estado-->
+      <h3>Resumo por Estado</h3>
+      <ul>
+        <li v-for="(quantidade,estado) in resumoEstados" :key="estado">
+          {{ estado }}: {{ quantidade }} usuario{{ quantidade > 1 ? 's' : '' }}
+        </li>
+      </ul>
+      <!--Criação do resumo por origem-->
+      <h3>Resumo por Origem</h3>
+      <ul>
+        <li v-for="(quantidade,origem) in resumoOrigem" :key="origem">
+          {{ origem }}: {{ quantidade }} usuario{{ quantidade > 1 ? 's' : '' }}
+        </li>
+      </ul>
+    </div>
   </div>
   </template>
 
 <script>
-export default{ //Exporta o componente para o Vue usar
-  name: 'FormularioUsuario', //Nome do componente
-  data() { //Função que retorna os dados do componente
-    return { //Dados do componente
-      usuario: { //Objeto que armazena os dados do usuário
+export default{ //Exporta o componente para o Vue usar.
+  name: 'FormularioUsuario', //Nome do componente.
+  data() { //Função que retorna os dados do componente.
+    return { //Dados do componente.
+      usuario: { //Objeto que armazena os dados do usuário.
         nome: '', 
         email: '',
         endereco: {
@@ -65,41 +82,55 @@ export default{ //Exporta o componente para o Vue usar
         },
         origem: ''
       },
-      usuarios: [] // Lista de usuarios cadastrados
+      usuarios: [] // Lista de usuarios cadastrados.
 
     };
   },
-  methods: { //Métodos do componente
-    buscarEndereco() { //Método que busca o endereço pelo CEP
-      const cep = this.usuario.endereco.cep.replace(/\D/g, ''); //Remove caracteres não numéricos do CEP
-      if (cep.length !== 8) { //Verifica se o CEP tem 8 dígitos
-        alert('CEP inválido'); //Alerta se o CEP não tiver 8 dígitos
+  methods: { //Métodos do componente.
+    buscarEndereco() { //Método que busca o endereço pelo CEP.
+      const cep = this.usuario.endereco.cep.replace(/\D/g, ''); //Remove caracteres não numéricos do CEP.
+      if (cep.length !== 8) { //Verifica se o CEP tem 8 dígitos.
+        alert('CEP inválido'); //Alerta se o CEP não tiver 8 dígitos.
         return;
       }
-      fetch(`https://viacep.com.br/ws/${cep}/json/`) //Faz uma requisição para a API de CEP
-        .then(response => response.json()) //Converte a resposta para JSON
-        .then(data => { //Quando a resposta chegar
+      fetch(`https://viacep.com.br/ws/${cep}/json/`) //Faz uma requisição para a API de CEP.
+        .then(response => response.json()) //Converte a resposta para JSON.
+        .then(data => { //Quando a resposta chegar.
           if (data.erro){
-            alert('CEP não encontrado'); //Alerta se o CEP não for encontrado
+            alert('CEP não encontrado'); //Alerta se o CEP não for encontrado.
           } else{
-            this.usuario.endereco.rua = data.logradouro; //Preenche o campo rua com o logradouro retornado
-            this.usuario.endereco.bairro = data.bairro; //Preenche o campo bairro com o bairro retornado
-            this.usuario.endereco.cidade = data.localidade; //Preenche o campo cidade com a localidade retornada
-            this.usuario.endereco.estado = data.uf; //Preenche o campo estado com a UF retornada
+            this.usuario.endereco.rua = data.logradouro; //Preenche o campo rua com o logradouro retornado.
+            this.usuario.endereco.bairro = data.bairro; //Preenche o campo bairro com o bairro retornado.
+            this.usuario.endereco.cidade = data.localidade; //Preenche o campo cidade com a localidade retornada.
+            this.usuario.endereco.estado = data.uf; //Preenche o campo estado com a UF retornada.
           }
         })
 
         .catch(() => {
-          alert('Erro ao buscar o CEP'); //Alerta se houver erro na requisição
+          alert('Erro ao buscar o CEP'); //Alerta se houver erro na requisição.
         });
       },
 
         cadastroUsuario() {
-          const novoUsuario = JSON.parse(JSON.stringify(this.usuario)); //Converte o objeto usuario para JSON
-          this.usuarios.push(novoUsuario); //Adiciona o novo usuário na lista de usuários
-          console.log('Usuário cadastrado:', this.usuario); //Exibe os dados do usuário no console
-          alert('Usuário cadastrado com sucesso!'); //Alerta que o usuário foi cadastrado
-          this.usuario ={ //Limpa os campos do formulário
+          if (
+            !this.usuario.nome || //Verifica se algum dos campos esta vazio.
+            !this.usuario.email ||
+            !this.usuario.endereco.cep ||
+            !this.usuario.endereco.rua ||
+            !this.usuario.endereco.bairro ||
+            !this.usuario.endereco.cidade ||
+            !this.usuario.endereco.estado ||
+            !this.usuario.origem  
+          ) {
+            alert('Preencha todos os campos!'); //Alerta se algum campo não estiver preenchido.
+            return; //Retorna para não cadastrar o usuário.
+          }
+
+          const novoUsuario = JSON.parse(JSON.stringify(this.usuario)); //Converte o objeto usuario para JSON.
+          this.usuarios.push(novoUsuario); //Adiciona o novo usuário na lista de usuários.
+          console.log('Usuário cadastrado:', this.usuario); //Exibe os dados do usuário no console.
+          alert('Usuário cadastrado com sucesso!'); //Alerta que o usuário foi cadastrado.
+          this.usuario ={ //Limpa os campos do formulário para um novo cadastro.
             nome: '',
             email: '',
             endereco: {
@@ -110,25 +141,32 @@ export default{ //Exporta o componente para o Vue usar
               estado: ''
             },
             origem: ''
+          };
+        }
+    },
+
+    computed: { // Essa função cria um resumo da quantidade de usuários cadastrados por estado.
+            resumoEstados() { 
+            const resumo = {}; // Objeto que vai armazenar o resumo.
+            this.usuarios.forEach(u => { // Para cada usuário na lista de usuários cadastrados.
+              const estado = u.endereco.estado || "Sem estado"; // Pega o estado do usuário ou "Sem estado" se não tiver.
+              resumo[estado] = (resumo[estado] || 0) + 1; // Adiciona 1 ao contador do estado no resumo.
+            });
+            return resumo; // Retorna o resumo com a contagem por estado.
+          },
+          resumoOrigem() { // Essa função cria um resumo da quantidade de usuários cadastrados por origem.
+            const resumo = {}; // Objeto que vai armazenar o resumo.
+            this.usuarios.forEach(u => { // Para cada usuário na lista de usuários cadastrados.
+              const origem = u.origem || "Não informado"; // Pega a origem do usuário ou "Não informado" se não tiver.
+              resumo[origem] = (resumo[origem] || 0) + 1; // Adiciona 1 ao contador da origem no resumo.
+            })
+            return resumo;
           }
         }
-
-        computed: {
-          resumoEstados() {
-            const resumo = {};
-            this.usuarios.forEach(user => {
-              const estado = user.endereco.estado ||
-              resumo[estado] = (resumo[estado] || 0) + 1;
-            });
-            return resumo;
-          },
-          
-        }
-    }
   };
+
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .container {
   display: flex;
@@ -136,14 +174,12 @@ export default{ //Exporta o componente para o Vue usar
   gap: 2rem;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem;
 }
 
 .formulario {
   flex: 1 1 300px;
   max-width: 500px;
   background: #f8f8f8;
-  padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -187,7 +223,6 @@ button:hover {
   background-color: #388e3c;
 }
 
-/* Lista de usuários */
 .lista-usuarios {
   flex: 1 1 300px;
   max-width: 500px;
@@ -195,6 +230,17 @@ button:hover {
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.lista-usuarios::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-usuarios::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
 }
 
 .lista-usuarios h2 {
@@ -224,4 +270,27 @@ button:hover {
 .lista-usuarios li:hover {
   transform: scale(1.02);
 }
+
+.resumos {
+  margin-left: 20px;
+}
+
+.resumo {
+  margin-bottom: 20px;
+}
+
+.resumo h3 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.resumo ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.resumo li {
+  margin-bottom: 5px;
+}
 </style>
+
