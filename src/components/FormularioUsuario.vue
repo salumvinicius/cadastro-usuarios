@@ -1,0 +1,139 @@
+<template>
+  <form class="formulario" @submit.prevent="cadastroUsuario">
+    <h2>Cadastro de Usuário</h2>
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" v-model="usuario.nome" required/>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" v-model="usuario.email" required/>
+
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" v-model="usuario.endereco.cep" @blur="buscarEndereco" maxlength="8" required/>
+
+    <label for="rua">Rua:</label>
+    <input type="text" id="rua" v-model="usuario.endereco.rua" required/>
+
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" v-model="usuario.endereco.bairro" required/>
+
+    <label for="cidade">Cidade:</label>
+    <input type="text" id="cidade" v-model="usuario.endereco.cidade" required/>
+
+    <label for="estado">Estado:</label>
+    <input type="text" id="estado" v-model="usuario.endereco.estado" required/>
+
+    <label for="origem">Origem:</label>
+    <select id="origem" v-model="usuario.origem" required>
+      <option value="">Selecione a origem</option>
+      <option value="digital">Digital</option>
+      <option value="fisico">Físico</option>
+    </select>
+
+    <button type="submit">Cadastrar</button>
+  </form>
+</template>
+
+<script>
+export default{ //Exporta o componente para o Vue usar
+  name: 'FormularioUsuario', //Nome do componente
+  data() { //Função que retorna os dados do componente
+    return { //Dados do componente
+      usuario: { //Objeto que armazena os dados do usuário
+        nome: '', 
+        email: '',
+        endereco: {
+          cep: '',
+          rua: '',
+          bairro: '',
+          cidade: '',
+          estado: ''
+        },
+        origem: ''
+      }
+    };
+  },
+  methods: { //Métodos do componente
+    buscarEndereco() { //Método que busca o endereço pelo CEP
+      const cep = this.usuario.endereco.cep.replace(/\D/g, ''); //Remove caracteres não numéricos do CEP
+      if (cep.length !== 8) { //Verifica se o CEP tem 8 dígitos
+        alert('CEP inválido'); //Alerta se o CEP não tiver 8 dígitos
+        return;
+      }
+      fetch(`https://viacep.com.br/ws/${cep}/json/`) //Faz uma requisição para a API de CEP
+        .then(response => response.json()) //Converte a resposta para JSON
+        .then(data => { //Quando a resposta chegar
+          if (data.erro){
+            alert('CEP não encontrado'); //Alerta se o CEP não for encontrado
+          } else{
+            this.usuario.endereco.rua = data.logradouro; //Preenche o campo rua com o logradouro retornado
+            this.usuario.endereco.bairro = data.bairro; //Preenche o campo bairro com o bairro retornado
+            this.usuario.endereco.cidade = data.localidade; //Preenche o campo cidade com a localidade retornada
+            this.usuario.endereco.estado = data.uf; //Preenche o campo estado com a UF retornada
+          }
+        })
+
+        .catch(() => {
+          alert('Erro ao buscar o CEP'); //Alerta se houver erro na requisição
+        });
+      },
+
+        cadastroUsuario() {
+          console.log('Usuário cadastrado:', this.usuario); //Exibe os dados do usuário no console
+          alert('Usuário cadastrado com sucesso!'); //Alerta que o usuário foi cadastrado
+        }
+    }
+  };
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.formulario {
+  max-width: 500px;
+  margin: 2 rem auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formulario h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-weight: bold;;
+}
+
+input, select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input[read-only] {
+  background-color: #eee;
+}
+
+button {
+  padding: 0.8rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
+
+
+</style>
